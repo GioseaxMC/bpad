@@ -23,6 +23,7 @@ typedef struct {
 } TokenList;
 
 #define TK_LO "\x1b[31m%s:\x1b[0m\x1b[33m%zu\x1b[0m:\x1b[32m%zu\x1b[0m"
+#define TK_SL "\x1b[31m%s:\x1b[0m\x1b[33m%zu\x1b[0m"
 
 #define tk_locator(tk) (tk).file, (tk).line, (tk).pos
 
@@ -79,6 +80,9 @@ int tokenize_string_literal(char *str, size_t *pos, size_t *row, char *token) {
                     break;
                 case '"':
                     token[i++] = '"';
+                    break;
+                case '0':
+                    token[i++] = 0;
                     break;
                 default:
                     token[i++] = '\\'; // Escape backslash if unknown sequence
@@ -164,6 +168,7 @@ void tokenize(char *file, TokenList *list, char* filename) {
         pos++;
         row++;
     }
+    add_token(list, filename, line, 0, "__EOF__");
 }
 
 Token current(TokenList* ls) {
@@ -194,3 +199,11 @@ int expect(TokenList* ls, char* goal) {
     // }
     
 }
+
+#define PREPEND_MINUS(str)                      \
+    do {                                                \
+        size_t _len = strlen(str);                      \
+        (str) = realloc((str), _len + 2);               \
+        memmove((str) + 1, (str), _len + 1);            \
+        (str)[0] = '-';                                 \
+    } while (0)

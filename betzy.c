@@ -75,6 +75,8 @@ void write_file(FILE* f, const void* data, size_t size) {
                 while(0);                                 \
             }
 
+#define repeat(_times) for (int _i=0; _i<(_times); _i++)
+
 #ifndef DA_INIT_CAP
 #define DA_INIT_CAP 256
 #endif
@@ -110,6 +112,43 @@ int str_is_ualnum(char* str) { // check if string is alnum or _
     return 1;
 }
 
+int stoi(const char *str) {
+    assert(str != NULL);
+    int result = 0;
+    int sign = 1;
+
+    while (*str == ' ' || *str == '\t' || *str == '\n')
+        ++str;
+
+    if (*str == '-') {
+        sign = -1;
+        ++str;
+    } else if (*str == '+') {
+        ++str;
+    }
+
+    assert(*str >= '0' && *str <= '9');
+    while (*str >= '0' && *str <= '9') {
+        result = result * 10 + (*str - '0');
+        ++str;
+    }
+
+    assert(*str == '\0');
+    return result * sign;
+}
+
+char is_numeric(const char* str) {
+    if (*str != '-' && !(*str >= '0' && *str <= '9')) return 0;
+
+    ++str;
+
+    while (*str >= '0' && *str <= '9') {
+        ++str;
+    }
+
+    if (*str == '\0') return 1; else return 0;
+}
+
 #define getsign(__val) (2*( (__val) >= 0) - 1)
 #define babs(__val) ((__val) * getsign(__val))
 
@@ -120,6 +159,8 @@ int str_is_ualnum(char* str) { // check if string is alnum or _
 typedef char bool;
 
 #define not !
+#define or ||
+#define and &&
 
 #define true 1
 #define false 0
